@@ -5,6 +5,12 @@ import os
 from tkinter import *
 import tkinter.filedialog
 from tkinter.filedialog import *
+from operator import itemgetter
+import nltk
+from nltk import word_tokenize
+import string
+from nltk.corpus import stopwords
+stopwords = nltk.corpus.stopwords.words('english')
 
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
@@ -350,12 +356,39 @@ def dictToFile(text, name):
             file.write(text[chap][verse])
     file.close() 
 
+def plot_cfd():
+    tup = []
+    freqtup = []
+    freqdict = {}
+    for key in sourcedict:
+        freqdict[key] = []
+        content = sourcedict[key]
+        # remove all the n:n
+        content = (re.sub("\d+:\d+","",content))
+        words = word_tokenize(content)
+        for word in words:
+            if not word.lower() in stopwords and not word.lower() in string.punctuation:
+                tup.append((key,word))
+    cfd = nltk.ConditionalFreqDist(tup)
+    for key in cfd:
+        tup = sorted(cfd[key].items(), key=itemgetter(1))
+        tup = tup[len(tup)-20:] # use variable
+        for l in tup:
+            freqdict[key].append(l[0])
+            for var in range(0, l[1]):
+                    freqtup.append((key,l[0]))
+    for key in freqdict:
+        for word in freqdict[key]:
+            for other in freqdict.keys():
+                if not key == other:
+                    if not word in freqdict[other]:
+                        freqdict[other].append(word) 
+                        if word in cfd[other]:
+                            for var in range(0, cfd[other][word]):
+                                freqtup.append((other,word))
 
-
-
-
-        
-    
+    freqcfd = nltk.ConditionalFreqDist(freqtup)
+    freqcfd.plot()
 
 # add methods to listbox
 # Double click removes the file
@@ -382,6 +415,10 @@ menu_file.add_command(label='Remove File',under=0,command=remove_file)
 menu_dh = Menu(m)
 m.add_cascade(label='DH',menu=menu_dh,underline=0)
 menu_dh.add_command(label='Create',under=0,command=create_ch_text)
+
+menu_cfd = Menu(m)
+m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
+menu_cfd.add_command(label='Plot',under=0,command=plot_cfd)
 
 # this starts the app
 root.mainloop()

@@ -7,6 +7,7 @@ from nltk.corpus import PlaintextCorpusReader
 from nltk.corpus import stopwords
 import string
 from operator import itemgetter
+from nltk import word_tokenize
 
 directory = os.getcwd() + "/"
 stopwords = nltk.corpus.stopwords.words('english')
