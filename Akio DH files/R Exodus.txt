@@ -1,52 +1,52 @@
 R Exodus
 
-1:1  Now these are the names of the children of Israel, which came into Egypt; every man and his household came with Jacob.
+  Now these are the names of the children of Israel, which came into Egypt; every man and his household came with Jacob.
 
-1:2  Reuben, Simeon, Levi, and Judah, 1:3  Issachar, Zebulun, and Benjamin, 1:4  Dan, and Naphtali, Gad, and Asher.
+  Reuben, Simeon, Levi, and Judah,   Issachar, Zebulun, and Benjamin,   Dan, and Naphtali, Gad, and Asher.
 
-1:5  And all the souls that came out of the loins of Jacob were seventy souls: for Joseph was in Egypt already.
+  And all the souls that came out of the loins of Jacob were seventy souls: for Joseph was in Egypt already.
 
-4:21 And the LORD said unto Moses, When thou goest to return into Egypt, see that thou do all those wonders before Pharaoh, which I have put in thine hand: but I will harden his heart, that he shall not let the people go.
+ And the LORD said unto Moses, When thou goest to return into Egypt, see that thou do all those wonders before Pharaoh, which I have put in thine hand: but I will harden his heart, that he shall not let the people go.
 
-6:13  And the LORD spake unto Moses and unto Aaron, and gave them a charge unto the children of Israel, and unto Pharaoh king of Egypt, to bring the children of Israel out of the land of Egypt.
+  And the LORD spake unto Moses and unto Aaron, and gave them a charge unto the children of Israel, and unto Pharaoh king of Egypt, to bring the children of Israel out of the land of Egypt.
 
-6:26  These are that Aaron and Moses, to whom the LORD said, Bring out the children of Israel from the land of Egypt according to their armies.
+  These are that Aaron and Moses, to whom the LORD said, Bring out the children of Israel from the land of Egypt according to their armies.
 
-6:27  These are they which spake to Pharaoh king of Egypt, to bring out the children of Israel from Egypt: these are that Moses and Aaron.
+  These are they which spake to Pharaoh king of Egypt, to bring out the children of Israel from Egypt: these are that Moses and Aaron.
 
-6:28  And it came to pass on the day when the LORD spake unto Moses in the land of Egypt, 6:29  That the LORD spake unto Moses, saying, I am the LORD: speak thou unto Pharaoh king of Egypt all that I say unto thee.
+  And it came to pass on the day when the LORD spake unto Moses in the land of Egypt,   That the LORD spake unto Moses, saying, I am the LORD: speak thou unto Pharaoh king of Egypt all that I say unto thee.
 
-6:30  And Moses said before the LORD, Behold, I am of uncircumcised lips, and how shall Pharaoh hearken unto me? 8:11 And the frogs shall depart from thee, and from thy houses, and from thy servants, and from thy people; they shall remain in the river only.
+  And Moses said before the LORD, Behold, I am of uncircumcised lips, and how shall Pharaoh hearken unto me?  And the frogs shall depart from thee, and from thy houses, and from thy servants, and from thy people; they shall remain in the river only.
 
-9:35  And the heart of Pharaoh was hardened, neither would he let the children of Israel go; as the LORD had spoken by Moses.
+  And the heart of Pharaoh was hardened, neither would he let the children of Israel go; as the LORD had spoken by Moses.
 
-10:20  But the LORD hardened Pharaoh's heart, so that he would not let the children of Israel go.
+  But the LORD hardened Pharaoh's heart, so that he would not let the children of Israel go.
 
-10:27  But the LORD hardened Pharaoh's heart, and he would not let them go.
+  But the LORD hardened Pharaoh's heart, and he would not let them go.
 
-11:9  And the LORD said unto Moses, Pharaoh shall not hearken unto you; that my wonders may be multiplied in the land of Egypt.
+  And the LORD said unto Moses, Pharaoh shall not hearken unto you; that my wonders may be multiplied in the land of Egypt.
 
-11:10  And Moses and Aaron did all these wonders before Pharaoh: and the LORD hardened Pharaoh's heart, so that he would not let the children of Israel go out of his land.
+  And Moses and Aaron did all these wonders before Pharaoh: and the LORD hardened Pharaoh's heart, so that he would not let the children of Israel go out of his land.
 
-12:37 And the children of Israel
+ And the children of Israel
 
-12:50  Thus did all the children of Israel; as the LORD commanded Moses and Aaron, so did they.
+  Thus did all the children of Israel; as the LORD commanded Moses and Aaron, so did they.
 
-12:51  And it came to pass the selfsame day, that the LORD did bring the children of Israel out of the land of Egypt by their armies.
+  And it came to pass the selfsame day, that the LORD did bring the children of Israel out of the land of Egypt by their armies.
 
-13:20  And they took their journey from Succoth, and encamped in Etham, in the edge of the wilderness.
+  And they took their journey from Succoth, and encamped in Etham, in the edge of the wilderness.
 
-15:19  For the horse of Pharaoh went in with his chariots and with his horsemen into the sea, and the LORD brought again the waters of the sea upon them; but the children of Israel went on dry land in the midst of the sea.
+  For the horse of Pharaoh went in with his chariots and with his horsemen into the sea, and the LORD brought again the waters of the sea upon them; but the children of Israel went on dry land in the midst of the sea.
 
-15:22 So Moses brought Israel from the Red sea, and they
+ So Moses brought Israel from the Red sea, and they
 
-15:27  And they came to Elim, where were twelve wells of water, and threescore and ten palm trees: and they encamped there by the waters.
+  And they came to Elim, where were twelve wells of water, and threescore and ten palm trees: and they encamped there by the waters.
 
-16:1  And they took their journey from Elim, and all the congregation of the children of Israel came unto the wilderness of Sin, which is between Elim and Sinai, on the fifteenth day of the second month after their departing out of the land of Egypt.
+  And they took their journey from Elim, and all the congregation of the children of Israel came unto the wilderness of Sin, which is between Elim and Sinai, on the fifteenth day of the second month after their departing out of the land of Egypt.
 
-17:1  And all the congregation of the children of Israel journeyed from the wilderness of Sin, after their journeys, according to the commandment of the LORD, and pitched in Rephidim: and there was no water for the people to drink.
+  And all the congregation of the children of Israel journeyed from the wilderness of Sin, after their journeys, according to the commandment of the LORD, and pitched in Rephidim: and there was no water for the people to drink.
 
-19:2 For they were departed from Rephidim, and
+ For they were departed from Rephidim, and
 
-34:1 And the LORD said unto Moses, Hew thee two tables of stone like unto the first: and I will write upon these tables the words that were in the first tables, which thou brakest.
+ And the LORD said unto Moses, Hew thee two tables of stone like unto the first: and I will write upon these tables the words that were in the first tables, which thou brakest.
 
