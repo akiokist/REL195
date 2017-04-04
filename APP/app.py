@@ -108,6 +108,26 @@ def remove_dh(event):
         lbdh.delete('active')
         lb.delete(0,END)
 
+def remove_file(event = ""):
+    iDir='c:/'
+    fTyp=[('text file','*.txt')]
+    file_directory=askopenfilename(filetypes=fTyp,initialdir=iDir)
+    if file_directory is not "":
+        filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
+        filename = filename[1:len(filename)-4]
+        lb.delete(0,END)
+        if filename in sourcedict:
+            sourcedict.pop(filename)
+            lbs.delete(0,END)
+            for key in sourcedict:
+                lbs.insert('end',key)
+        if filename in dhdict:
+            dhdict.pop(filename)
+            lbdh.delete(0,END)
+            for key in dhdict:
+                lbdh.insert('end',key)
+
+
 def update_display_s(event):
     if not lbs.get('active') is '':
         text = sourcedict[lbs.get('active')]
@@ -142,5 +162,6 @@ menu_file = Menu(m)
 m.add_cascade(label='FILE',menu=menu_file,underline=0)
 menu_file.add_command(label='Load Text',under=0,command=load_text)
 menu_file.add_command(label='Load DH File',under=0,command=load_dh)
-
+menu_file.add_command(label='Remove File',under=0,command=remove_file)
+# this starts the app
 root.mainloop()
