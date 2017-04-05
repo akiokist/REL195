@@ -8,6 +8,7 @@ from tkinter.filedialog import *
 from operator import itemgetter
 import nltk
 from nltk import word_tokenize
+from nltk import FreqDist
 import string
 from nltk.corpus import stopwords
 stopwords = nltk.corpus.stopwords.words('english')
@@ -85,20 +86,16 @@ def load_source(event = ""):
         iDir=directory + "text/"
     else:
         iDir=directory
-    open_files(iDir, sourcedict,lbs)
+    open_files(askopenfilenames(filetypes=fTyp,initialdir=iDir), sourcedict,lbs)
     
 def load_dh(event = ""):
     if os.path.isdir(directory+ "dh"):
         iDir=directory + "dh/"
     else:
         iDir=directory
-    open_files(iDir, dhdict,lbdh)
+    open_files(askopenfilenames(filetypes=fTyp,initialdir=iDir), dhdict,lbdh)
 
-def open_files(path, filedict, listbox):
-    # does not loop any more for oppening files
-    #oppening = True
-    #while oppening:
-    filenames=askopenfilenames(filetypes=fTyp,initialdir=path)
+def open_files(filenames, filedict, listbox):
     if len(filenames) > 0:
         for file_directory in filenames:
             filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
@@ -110,8 +107,6 @@ def open_files(path, filedict, listbox):
                 listbox.insert('end',filename)
                 update_lb(text)
                 file.close()
-     #   else:
-     #       oppening = False
     
 def remove_source(event=""):
     if not lbs.get('active') is '':
@@ -154,7 +149,16 @@ def update_lb(text):
     lb.delete(0,END)
     for s in text.split("\n"):
         lb.insert('end', s)
-    
+
+def plot_fd():
+    if lbs.curselection() == ():
+        if len(sourcedict) == 0:
+            update_lb("Need at least one Source file")
+            return
+        elif len(sourcedict) > 1:
+            update_lb("Need to select one Source file")
+            return
+    FreqDist(word_tokenize(sourcedict[lbs.get('active')])).plot()
 
 def create_dh_text(event=""):
     if not option.get():
@@ -191,7 +195,7 @@ def create_dh_text(event=""):
         for chap in sorted(text.keys()):
             for verse in sorted(text[chap].keys()):
                 content += str(chap) + ":" + str(verse) + " " +text[chap][verse]
-                file.write(content)
+        file.write(content)
         file.close()
         sourcedict[name] = content
         dhdict.pop(key)
@@ -384,8 +388,7 @@ def plot_cfd():
         thismuch = 20
         if buffer.get().isdigit():
             thismuch = int(buffer.get())
-        tup = tup[len(tup)-thismuch:] # use variable
-        
+        tup = tup[len(tup)-thismuch:] # use variable        
         for l in tup:
             freqdict[key].append(l[0])
             for var in range(0, l[1]):
@@ -407,9 +410,9 @@ def plot_cfd():
 # Double click removes the file
 lbs.bind('<Double-1>', remove_source)
 lbdh.bind('<Double-1>', remove_dh)
-lbs.bind('<Double-Button-3>', update_display_s)
-# Right Double click displays the file
-lbdh.bind('<Double-Button-3>', update_display_dh)
+# Right Single click to displays the content of the file "now Single Click"
+lbs.bind('<Button-3>', update_display_s)
+lbdh.bind('<Button-3>', update_display_dh)
 
 # control the bihavior of resising window
 root.grid_columnconfigure(0,weight=1)
@@ -432,6 +435,21 @@ menu_dh.add_command(label='Create',under=0,command=create_dh_text)
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
 menu_cfd.add_command(label='Plot',under=0,command=plot_cfd)
+        
+menu_fdist = Menu(m)
+m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
+menu_fdist.add_command(label='Plot',under=0,command=plot_fd)
+
+# load text files from "text" folder if it exits
+if os.path.isdir(directory+ "text"):
+    file_directories = []
+    for filename in os.listdir(directory + "text"):
+        if filename.split(".")[-1] == "txt":
+            file_directories.append(directory + "text/" + filename)        
+    if len(file_directories) > 0:
+        open_files(file_directories, sourcedict, lbs)
+
+#open_files(path, filedict, listbox)
 
 # this starts the app
 root.mainloop()
