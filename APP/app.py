@@ -18,7 +18,7 @@ sourcedict = {}
 dhdict= {}
 cfd = {}
 
-dir = os.getcwd() + "/"
+directory = os.getcwd() + "/"
 
 root = tkinter.Tk()
 # set the title of the app
@@ -77,41 +77,42 @@ buffer.set("20")
 e = Entry(root, textvariable = buffer)
 e.grid(row = 7, column = 0,columnspan = 2, sticky = 'ew',  padx = 10, pady = 10)
 
+# the file type that the load methods accept
+fTyp=[('text file','*.txt')]
 # add methods
-def load_text(event = ""):
-    iDir='c:/'
-    fTyp=[('text file','*.txt')]
-    file_directory=askopenfilename(filetypes=fTyp,initialdir=iDir)
-    if file_directory is not "":
-        filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
-        filename = filename[1:len(filename)-4]
-        if not filename in sourcedict:
-            file = open(file_directory)
-            sourcedict[filename] = file.read()
-            text = sourcedict[filename]
-            lbs.insert('end',filename)
-            lb.delete(0,END)
-            for s in text.split("\n"):
-                lb.insert('end', s)
-            file.close()
-
+def load_source(event = ""):
+    if os.path.isdir(directory+ "text"):
+        iDir=directory + "text/"
+    else:
+        iDir=directory
+    open_files(iDir, sourcedict,lbs)
+    
 def load_dh(event = ""):
-    iDir='c:/'
-    fTyp=[('text file','*.txt')]
-    file_directory=askopenfilename(filetypes=fTyp,initialdir=iDir)
-    if file_directory is not "":
-        filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
-        filename = filename[1:len(filename)-4]
-        if not filename in dhdict:
-            file = open(file_directory)
-            dhdict[filename] = file.read()
-            text = dhdict[filename]
-            lbdh.insert('end',filename)
-            lb.delete(0,END)
-            for s in text.split("\n"):
-                lb.insert('end', s)
-            file.close()
+    if os.path.isdir(directory+ "dh"):
+        iDir=directory + "dh/"
+    else:
+        iDir=directory
+    open_files(iDir, dhdict,lbdh)
 
+def open_files(path, filedict, listbox):
+    # does not loop any more for oppening files
+    #oppening = True
+    #while oppening:
+    filenames=askopenfilenames(filetypes=fTyp,initialdir=path)
+    if len(filenames) > 0:
+        for file_directory in filenames:
+            filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
+            filename = filename[1:len(filename)-4]
+            if not filename in filedict:
+                file = open(file_directory)
+                filedict[filename] = file.read()
+                text = filedict[filename]
+                listbox.insert('end',filename)
+                update_lb(text)
+                file.close()
+     #   else:
+     #       oppening = False
+    
 def remove_source(event=""):
     if not lbs.get('active') is '':
         sourcedict.pop(lbs.get('active'))
@@ -144,26 +145,33 @@ def remove_file(event = ""):
 
 def update_display_s(event):
     if not lbs.get('active') is '':
-        text = sourcedict[lbs.get('active')]
-        lb.delete(0,END)
-        for s in text.split("\n"):
-                lb.insert('end', s)
+        update_lb(sourcedict[lbs.get('active')])
 def update_display_dh(event):
     if not lbdh.get('active') is '':
-        text = dhdict[lbdh.get('active')]
-        lb.delete(0,END)
-        for s in text.split("\n"):
-                lb.insert('end', s)
+        update_lb(dhdict[lbdh.get('active')])
 
-def create_ch_text(event=""):
+def update_lb(text):
+    lb.delete(0,END)
+    for s in text.split("\n"):
+        lb.insert('end', s)
+    
+
+def create_dh_text(event=""):
     if not option.get():
-        lb.delete(0,END)
-        lb.insert('end',"DH is only for text with n:n")
+        update_lb("DH is only for text with n:n")
         return
-    if lbs.curselection() == () or len(dhdict) == 0:
-        lb.delete(0,END)
-        lb.insert('end',"Need at least one DH file")
+    if len(dhdict) == 0:
+        update_lb("Need at least one DH file")
         return
+    if lbs.curselection() == ():
+        if len(sourcedict) == 0:
+            update_lb("Need at least one Source file")
+            return
+        elif len(sourcedict) > 1:
+            update_lb("Need to select one Source file")
+            return
+    # if there is only one source file, even if it is not selected
+    # it will use that source
     whole_text = fileToDict(sourcedict[lbs.get('active')])
     keys = []
     if lbdh.curselection() == ():
@@ -174,10 +182,12 @@ def create_ch_text(event=""):
     for key in keys:
         text = ParseMarking(whole_text, dhdict[key])
         name =   key.split(" ")[0] + " " + lbs.get('active')
-        file = open(name + '.txt','w')
+        iDir=directory
+        if os.path.isdir(directory+ "text"):
+            iDir=directory + "text/"
+        file = open(iDir +name + '.txt','w')
         #file.write(name + "\n\n")
         content = name + "\n\n"
-        lb.delete(0,END)
         for chap in sorted(text.keys()):
             for verse in sorted(text[chap].keys()):
                 content += str(chap) + ":" + str(verse) + " " +text[chap][verse]
@@ -186,12 +196,11 @@ def create_ch_text(event=""):
         sourcedict[name] = content
         dhdict.pop(key)
     remove_source()
+    update_lb(content)
     lbdh.delete(0,END)
     lbs.delete(0,END)
     for key in dhdict:
         lbdh.insert('end', key)
-    for s in content.split("\n"):
-        lb.insert('end', s)
     for key in sourcedict:
             lbs.insert('end', key)
         
@@ -372,7 +381,11 @@ def plot_cfd():
     cfd = nltk.ConditionalFreqDist(tup)
     for key in cfd:
         tup = sorted(cfd[key].items(), key=itemgetter(1))
-        tup = tup[len(tup)-20:] # use variable
+        thismuch = 20
+        if buffer.get().isdigit():
+            thismuch = int(buffer.get())
+        tup = tup[len(tup)-thismuch:] # use variable
+        
         for l in tup:
             freqdict[key].append(l[0])
             for var in range(0, l[1]):
@@ -408,13 +421,13 @@ m = Menu(root)
 root.configure(menu = m)
 menu_file = Menu(m)
 m.add_cascade(label='FILE',menu=menu_file,underline=0)
-menu_file.add_command(label='Load Text',under=0,command=load_text)
+menu_file.add_command(label='Load Text',under=0,command=load_source)
 menu_file.add_command(label='Load DH File',under=0,command=load_dh)
 menu_file.add_command(label='Remove File',under=0,command=remove_file)
 
 menu_dh = Menu(m)
 m.add_cascade(label='DH',menu=menu_dh,underline=0)
-menu_dh.add_command(label='Create',under=0,command=create_ch_text)
+menu_dh.add_command(label='Create',under=0,command=create_dh_text)
 
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
