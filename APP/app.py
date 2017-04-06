@@ -17,8 +17,7 @@ stopwords = nltk.corpus.stopwords.words('english')
 sourcedict = {}
 # dict of DH files
 dhdict= {}
-cfd = {}
-
+# save the current directory
 directory = os.getcwd() + "/"
 
 root = tkinter.Tk()
@@ -26,11 +25,14 @@ root = tkinter.Tk()
 root.title(u"No Title at this point")
 
 # create Listbox
+# main list box on the left
 lb = Listbox(root)
+# list box for source files on top right
 lbs = Listbox(root)
+# list box for dh files on bottum right
 lbdh = Listbox(root, selectmode=MULTIPLE)
 
-# create Scrollbar vertical and horizontal
+# create Scrollbar vertical and horizontal for each list box
 sb1 = Scrollbar(root, orient = 'v', command = lb.yview)
 sb2 = Scrollbar(root, orient = 'h', command = lb.xview)
 ssb1 = Scrollbar(root, orient = 'v', command = lbs.yview)
@@ -66,17 +68,19 @@ lbdh_label = Label(root, text="DH Files")
 lbs_label.grid(row = 0, column = 2, pady = 5,padx=8,sticky = 'ew')
 lbdh_label.grid(row = 3, column = 2, pady = 0,padx=8,sticky = 'ew')
 
-option = BooleanVar()
-option.set(True)
-Checkbutton(text = 'Source with n:n', variable = option).grid(row = 6, column = 2, pady = 0,padx=8,sticky = 'ew')
-
+# create a check box for two options
+nn = BooleanVar()
+nn.set(True)
+Checkbutton(text = 'Source with "n:n"', variable = nn).grid(row = 6, column = 2, pady = 0,padx=8,sticky = 'w')
+naming = BooleanVar()
+naming.set(False)
+Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = 7, column = 2, pady = 0,padx=8,sticky = 'w')
 
 # set entry box
 buffer = StringVar()
-buffer.set("20")
-
+#buffer.set("20")
 e = Entry(root, textvariable = buffer)
-e.grid(row = 7, column = 0,columnspan = 2, sticky = 'ew',  padx = 10, pady = 10)
+e.grid(row = 7, column = 0,columnspan = 2, sticky = 'ew',  padx = 20, pady = 7)
 
 # the file type that the load methods accept
 fTyp=[('text file','*.txt')]
@@ -161,7 +165,7 @@ def plot_fd():
     FreqDist(word_tokenize(sourcedict[lbs.get('active')])).plot()
 
 def create_dh_text(event=""):
-    if not option.get():
+    if not nn.get():
         update_lb("DH is only for text with n:n")
         return
     if len(dhdict) == 0:
@@ -170,6 +174,25 @@ def create_dh_text(event=""):
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
             update_lb("Need at least one Source file")
+            return
+        elif naming.get():
+            # if DH file all has the form"groupname textname Marking" do it automaticlly
+            d = {}
+            for textname in sourcedict:
+                keys = []
+                for dhname in dhdict:
+                    threeparts = dhname.split(" ")
+                    if len(threeparts) > 2 and threeparts[-1] == "Marking":
+                        if textname == " ".join(threeparts[1:-1]):
+                            keys.append(dhname)
+                    else:
+                        update_lb(dhname + " does not follow the naming rule.\n DH files must have 'one word group name' + 'Text file name' 'Marking' with spaces")
+                        return
+                if len(keys) > 0:
+                    d[textname] = keys
+            for textname in d:
+                whole_text = fileToDict(sourcedict[textname])
+                create_dh_source(textname,whole_text, d[textname])
             return
         elif len(sourcedict) > 1:
             update_lb("Need to select one Source file")
@@ -183,14 +206,16 @@ def create_dh_text(event=""):
     else:
         for index in lbdh.curselection():
             keys.append(lbdh.get(index))
+    create_dh_source(lbs.get('active'),whole_text, keys)
+    
+def create_dh_source(sourcename,whole_text, keys):
     for key in keys:
         text = ParseMarking(whole_text, dhdict[key])
-        name =   key.split(" ")[0] + " " + lbs.get('active')
+        name =   key.split(" ")[0] + " " + sourcename
         iDir=directory
         if os.path.isdir(directory+ "text"):
             iDir=directory + "text/"
         file = open(iDir +name + '.txt','w')
-        #file.write(name + "\n\n")
         content = name + "\n\n"
         for chap in sorted(text.keys()):
             for verse in sorted(text[chap].keys()):
@@ -199,7 +224,7 @@ def create_dh_text(event=""):
         file.close()
         sourcedict[name] = content
         dhdict.pop(key)
-    remove_source()
+    sourcedict.pop(sourcename)
     update_lb(content)
     lbdh.delete(0,END)
     lbs.delete(0,END)
@@ -207,6 +232,9 @@ def create_dh_text(event=""):
         lbdh.insert('end', key)
     for key in sourcedict:
             lbs.insert('end', key)
+
+#def create_dh_text_with_naming(event=""):
+    
         
 def fileToDict(text):
     chapDict = {}
@@ -377,7 +405,8 @@ def plot_cfd():
         freqdict[key] = []
         content = sourcedict[key]
         # remove all the n:n
-        content = (re.sub("\d+:\d+","",content))
+        if nn.get():
+            content = (re.sub("\d+:\d+","",content))
         words = word_tokenize(content)
         for word in words:
             if not word.lower() in stopwords and not word.lower() in string.punctuation:
@@ -414,7 +443,7 @@ lbdh.bind('<Double-1>', remove_dh)
 lbs.bind('<Button-3>', update_display_s)
 lbdh.bind('<Button-3>', update_display_dh)
 
-# control the bihavior of resising window
+# control the bihavior of resising window, see what happens when you change the size
 root.grid_columnconfigure(0,weight=1)
 root.grid_rowconfigure(1,weight=1)
 root.grid_rowconfigure(2,weight=1)
@@ -423,6 +452,8 @@ root.grid_rowconfigure(2,weight=1)
 m = Menu(root)
 root.configure(menu = m)
 menu_file = Menu(m)
+
+# adding cascades to menu m
 m.add_cascade(label='FILE',menu=menu_file,underline=0)
 menu_file.add_command(label='Load Text',under=0,command=load_source)
 menu_file.add_command(label='Load DH File',under=0,command=load_dh)
@@ -449,7 +480,15 @@ if os.path.isdir(directory+ "text"):
     if len(file_directories) > 0:
         open_files(file_directories, sourcedict, lbs)
 
-#open_files(path, filedict, listbox)
+
+# load text files from "dh" folder if it exits
+if os.path.isdir(directory+ "dh"):
+    file_directories = []
+    for filename in os.listdir(directory + "dh"):
+        if filename.split(".")[-1] == "txt":
+            file_directories.append(directory + "dh/" + filename)        
+    if len(file_directories) > 0:
+        open_files(file_directories, dhdict, lbdh)
 
 # this starts the app
 root.mainloop()
