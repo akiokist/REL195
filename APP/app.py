@@ -232,9 +232,6 @@ def create_dh_source(sourcename,whole_text, keys):
         lbdh.insert('end', key)
     for key in sourcedict:
             lbs.insert('end', key)
-
-#def create_dh_text_with_naming(event=""):
-    
         
 def fileToDict(text):
     chapDict = {}
@@ -433,7 +430,8 @@ def plot_cfd():
                                 freqtup.append((other,word))
 
     freqcfd = nltk.ConditionalFreqDist(freqtup)
-    freqcfd.plot()
+    if len(freqcfd) > 0:
+        freqcfd.plot()
 
 # add methods to listbox
 # Double click removes the file
