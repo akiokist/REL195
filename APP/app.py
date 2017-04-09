@@ -488,5 +488,8 @@ if os.path.isdir(directory+ "dh"):
     if len(file_directories) > 0:
         open_files(file_directories, dhdict, lbdh)
 
+if len(sourcedict) >0:
+    update_lb(sourcedict[lbs.get(0)])
+
 # this starts the app
 root.mainloop()
