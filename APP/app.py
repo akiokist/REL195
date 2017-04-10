@@ -12,6 +12,8 @@ from nltk import FreqDist
 import string
 from nltk.corpus import stopwords
 stopwords = nltk.corpus.stopwords.words('english')
+import pylab as pl
+import numpy as np
 
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
@@ -19,6 +21,9 @@ sourcedict = {}
 dhdict= {}
 # save the current directory
 directory = os.getcwd() + "/"
+
+# save the fdist, key is the file name and the value is the fd dictionary
+fdistdict = {}
 
 root = tkinter.Tk()
 # set the title of the app
@@ -155,6 +160,30 @@ def update_lb(text):
         lb.insert('end', s)
 
 def plot_fd():
+    fd = create_fd()
+    if len(fd) > 0:
+        fd.plot()
+
+def plot_fd_percentile():
+    fd = create_fd()
+    wl = []
+    d = {}
+    if len(fd) > 0:
+        total = len(FreqDist(remove_stopwords(word_tokenize(sourcedict[lbs.get('active')]))))
+        #print(str(total))
+        for word in fd:
+            p = (100 / total * fd[word])
+            d[word] = p
+            #print(word + ":" + str(fd[word]) + "::" + str(p))
+        X = np.arange(len(d))
+        pl.bar(X, d.values(), align='center', width=0.5)
+        pl.xticks(X, d.keys())
+        ymax = max(d.values()) + 1
+        pl.ylim(0, ymax)
+        pl.show()
+        
+
+def create_fd():
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
             update_lb("Need at least one Source file")
@@ -162,7 +191,40 @@ def plot_fd():
         elif len(sourcedict) > 1:
             update_lb("Need to select one Source file")
             return
-    FreqDist(word_tokenize(sourcedict[lbs.get('active')])).plot()
+    thismuch = 20
+    if buffer.get().isdigit():
+        thismuch = int(buffer.get())
+        
+    filename = lbs.get('active')
+    if filename in fdistdict:
+        if len(fdistdict[filename]) > thismuch:
+            fdistdict[filename] = common_fdist(fdistdict[filename], thismuch)
+        else:
+            fdistdict[filename] = FreqDist(remove_stopwords(word_tokenize(sourcedict[filename])))
+            fdistdict[filename] = common_fdist(fdistdict[filename], thismuch)
+        fd = fdistdict[filename]
+    else:
+        fd = FreqDist(remove_stopwords(word_tokenize(sourcedict[filename])))
+        fd = common_fdist(fd, thismuch)
+        fdistdict[filename] = fd
+    return fd
+        
+def common_fdist(fd, thismuch):
+    tup = sorted(fd.items(), key=itemgetter(1))
+    tup = tup[len(tup)-thismuch:] # use variable
+    wl = []
+    for t in tup:
+        for var in range(0, t[1]):
+            wl.append(t[0])
+    return FreqDist(wl)
+
+def remove_stopwords(wl):
+    returning_wl = []
+    for word in wl:
+        #word = word.lower()
+        if not word.lower() in stopwords and not word.lower() in string.punctuation and not word.lower() == "'s" :
+            returning_wl.append(word)
+    return  returning_wl
 
 def create_dh_text(event=""):
     if not nn.get():
@@ -392,9 +454,40 @@ def dictToFile(text, name):
         for verse in sorted(text[chap].keys()):
             file.write(str(chap) + ":" + str(verse) + " ")
             file.write(text[chap][verse])
-    file.close() 
-
+    file.close()
+    
 def plot_cfd():
+    freqcfd = create_cfd()
+    if len(freqcfd) > 0:
+        freqcfd.plot()
+
+def plot_cfd_percentile():
+    freqcfd = create_cfd()
+    if len(freqcfd) > 0:
+        for filename in freqcfd:
+            total = len(remove_stopwords(word_tokenize(sourcedict[filename])))
+            for word in freqcfd[filename]:
+                p = 100 / total * freqcfd[filename][word]
+                freqcfd[filename][word] = p
+        freqcfd.plot()
+
+# set cfd
+cfd_display_size = [20]
+cfdist = {20:{}}
+sources_used = []
+
+def create_cfd():
+    thismuch = 20
+    if buffer.get().isdigit():
+        thismuch = int(buffer.get())
+    if thismuch == cfd_display_size[0]:
+        same = True
+        if len(sources_used) == len(sourcedict):
+            for index in range(0,len(sources_used)):
+                if not sources_used[index] == lbs.get(index):
+                    same = False
+            if same:
+                return cfdist[thismuch]
     tup = []
     freqtup = []
     freqdict = {}
@@ -404,16 +497,13 @@ def plot_cfd():
         # remove all the n:n
         if nn.get():
             content = (re.sub("\d+:\d+","",content))
-        words = word_tokenize(content)
+        words = remove_stopwords(word_tokenize(content))
         for word in words:
-            if not word.lower() in stopwords and not word.lower() in string.punctuation:
-                tup.append((key,word))
+            tup.append((key,word))
     cfd = nltk.ConditionalFreqDist(tup)
     for key in cfd:
         tup = sorted(cfd[key].items(), key=itemgetter(1))
-        thismuch = 20
-        if buffer.get().isdigit():
-            thismuch = int(buffer.get())
+        
         tup = tup[len(tup)-thismuch:] # use variable        
         for l in tup:
             freqdict[key].append(l[0])
@@ -428,10 +518,12 @@ def plot_cfd():
                         if word in cfd[other]:
                             for var in range(0, cfd[other][word]):
                                 freqtup.append((other,word))
-
-    freqcfd = nltk.ConditionalFreqDist(freqtup)
-    if len(freqcfd) > 0:
-        freqcfd.plot()
+    del sources_used[:]
+    for index in range (0,len(sourcedict)):
+        sources_used.append(lbs.get(index))
+    cfd_display_size[0] = thismuch
+    cfdist[thismuch] = nltk.ConditionalFreqDist(freqtup)
+    return cfdist[thismuch]
 
 # add methods to listbox
 # Double click removes the file
@@ -463,12 +555,13 @@ menu_dh.add_command(label='Create',under=0,command=create_dh_text)
 
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
-menu_cfd.add_command(label='Plot',under=0,command=plot_cfd)
+menu_cfd.add_command(label='Plot Value',under=0,command=plot_cfd)
+menu_cfd.add_command(label='Plot Percentile',under=0,command=plot_cfd_percentile)
         
 menu_fdist = Menu(m)
 m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
-menu_fdist.add_command(label='Plot',under=0,command=plot_fd)
-
+menu_fdist.add_command(label='Plot Value',under=0,command=plot_fd)
+menu_fdist.add_command(label='Plot Percentile',under=0,command=plot_fd_percentile)
 # load text files from "text" folder if it exits
 if os.path.isdir(directory+ "text"):
     file_directories = []
