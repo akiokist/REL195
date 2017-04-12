@@ -14,9 +14,7 @@ from nltk.corpus import stopwords
 stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
-
 import urllib
-
 import unicodedata
 
 biblename = "WEB " #"World English Bible"
@@ -59,7 +57,7 @@ def write_chapter(file, chapter, after):
             content = chapter + ":" + verse_num + " " + content[2:-3] + "\n\n"
             file.write(content)
         else:
-            print("hummmmmm........")
+            print('[^\d]+\d+;</span> does not exist in :' + verse)
 
 
 files = []
