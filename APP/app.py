@@ -245,7 +245,7 @@ def create_dh_text(event=""):
                 for dhname in dhdict:
                     threeparts = dhname.split(" ")
                     if len(threeparts) > 2 and threeparts[-1] == "Marking":
-                        if textname == " ".join(threeparts[1:-1]):
+                        if re.match(r"^"+" ".join(threeparts[1:-1]), textname):#" ".join(threeparts[1:-1]) in textname:
                             keys.append(dhname)
                     else:
                         update_lb(dhname + " does not follow the naming rule.\n DH files must have 'one word group name' + 'Text file name' 'Marking' with spaces")
@@ -255,6 +255,7 @@ def create_dh_text(event=""):
             for textname in d:
                 whole_text = fileToDict(sourcedict[textname])
                 create_dh_source(textname,whole_text, d[textname])
+            remove_files(d)
             return
         elif len(sourcedict) > 1:
             update_lb("Need to select one Source file")
@@ -269,6 +270,21 @@ def create_dh_text(event=""):
         for index in lbdh.curselection():
             keys.append(lbdh.get(index))
     create_dh_source(lbs.get('active'),whole_text, keys)
+    remove_files({lbs.get('active'):keys})
+
+def remove_files(d):
+    for textname in d:
+        for dhname in d[textname]:
+            if dhname in dhdict:
+                dhdict.pop(dhname)
+        sourcedict.pop(textname)
+    lbdh.delete(0,END)
+    lbs.delete(0,END)
+    for key in dhdict:
+        lbdh.insert('end', key)
+    for key in sourcedict:
+        lbs.insert('end', key)
+    
     
 def create_dh_source(sourcename,whole_text, keys):
     for key in keys:
@@ -285,15 +301,16 @@ def create_dh_source(sourcename,whole_text, keys):
         file.write(content)
         file.close()
         sourcedict[name] = content
-        dhdict.pop(key)
-    sourcedict.pop(sourcename)
     update_lb(content)
-    lbdh.delete(0,END)
-    lbs.delete(0,END)
-    for key in dhdict:
-        lbdh.insert('end', key)
-    for key in sourcedict:
-            lbs.insert('end', key)
+        #dhdict.pop(key)
+    #sourcedict.pop(sourcename)
+    
+    #lbdh.delete(0,END)
+    #lbs.delete(0,END)
+    #for key in dhdict:
+     #   lbdh.insert('end', key)
+    #for key in sourcedict:
+     #       lbs.insert('end', key)
         
 def fileToDict(text):
     chapDict = {}
@@ -303,26 +320,38 @@ def fileToDict(text):
         while i < length and not text[i].isdigit():
             i += 1
     start = i
-    while i < length and text[i] != ":":
+    while i < length and text[i] != ":": #.isdigit():#  now goes as long there is an integer
         i += 1
     while i < length:
         currentChap = int(text[start:i])
         chapDict[currentChap] = {}
+        # check if it is still the same chapter
         while i < length and currentChap == int(text[start:i]):
+            end_of_verse = False
             i += 1
             start = i
             while i < length and text[i].isdigit():
                 i += 1
             currentVerse = int(text[start:i])
+
             start = i
-            while i < length and not text[i].isdigit():
-                i += 1
+            #set i to be the end of this verse
+            while not end_of_verse:
+                while i < length and not text[i].isdigit():
+                    i += 1
+                end = i
+                while i < length and text[i].isdigit():
+                    i += 1
+                if i >= length:
+                    chapDict[currentChap][currentVerse] = text[start:i]
+                    break # end of file
+                if text[i] == ":":
+                    i = end
+                    end_of_verse = True
             chapDict[currentChap][currentVerse] = text[start:i]
-            if i >= length:
-                break # end of file
-            # check if it is still the same chapter
+            
             start = i
-            while i < length and text[i] != ":":
+            while i < length and text[i] != ":":#.isdigit():# 
                 i += 1
     return chapDict
 
@@ -471,23 +500,10 @@ def plot_cfd_percentile():
                 freqcfd[filename][word] = p
         freqcfd.plot()
 
-# set cfd
-cfd_display_size = [20]
-cfdist = {20:{}}
-sources_used = []
-
 def create_cfd():
     thismuch = 20
     if buffer.get().isdigit():
         thismuch = int(buffer.get())
-    if thismuch == cfd_display_size[0]:
-        same = True
-        if len(sources_used) == len(sourcedict):
-            for index in range(0,len(sources_used)):
-                if not sources_used[index] == lbs.get(index):
-                    same = False
-            if same:
-                return cfdist[thismuch]
     tup = []
     freqtup = []
     freqdict = {}
@@ -518,12 +534,7 @@ def create_cfd():
                         if word in cfd[other]:
                             for var in range(0, cfd[other][word]):
                                 freqtup.append((other,word))
-    del sources_used[:]
-    for index in range (0,len(sourcedict)):
-        sources_used.append(lbs.get(index))
-    cfd_display_size[0] = thismuch
-    cfdist[thismuch] = nltk.ConditionalFreqDist(freqtup)
-    return cfdist[thismuch]
+    return nltk.ConditionalFreqDist(freqtup)
 
 # add methods to listbox
 # Double click removes the file
