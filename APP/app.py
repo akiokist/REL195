@@ -15,6 +15,8 @@ stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
 
+"rewrite"
+
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
 # dict of DH files
