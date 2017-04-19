@@ -15,8 +15,6 @@ stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
 
-"rewrite"
-
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
 # dict of DH files
@@ -183,7 +181,6 @@ def plot_fd_percentile():
         ymax = max(d.values()) + 1
         pl.ylim(0, ymax)
         pl.show()
-        
 
 def create_fd():
     if lbs.curselection() == ():
@@ -490,7 +487,7 @@ def dictToFile(text, name):
 def plot_cfd():
     freqcfd = create_cfd()
     if len(freqcfd) > 0:
-        freqcfd.plot()
+        freqcfd.plot(title='Conditional Frequency Distribution')
 
 def plot_cfd_percentile():
     freqcfd = create_cfd()

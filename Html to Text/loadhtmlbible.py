@@ -17,7 +17,7 @@ import numpy as np
 import urllib
 import unicodedata
 
-biblename = "WEB " #"World English Bible"
+biblename = "WEB" #"World English Bible"
 
 # save the current directory
 directory = os.getcwd()
@@ -28,7 +28,7 @@ def html_to_txt(files):
     for index in range(0, files_size):
         match = re.search("<div class='mt'>([^/]+)</div>", files[index])
         if match != None:
-            title = biblename + match.group(1).strip()
+            title = match.group(1).strip() + " " + biblename
             if file != None:
                 file.close()
             file = create_new_file(title)
