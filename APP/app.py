@@ -15,6 +15,8 @@ stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
 
+DH_FILE_CALLED = "Marking"
+
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
 # dict of DH files
@@ -27,7 +29,7 @@ fdistdict = {}
 
 root = tkinter.Tk()
 # set the title of the app
-root.title(u"No Title at this point")
+root.title("test")
 
 # create Listbox
 # main list box on the left
@@ -68,7 +70,7 @@ dhsb1.grid(row = 4, column = 3, sticky = 'ns')
 dhsb2.grid(row = 5, column = 2, sticky = 'ew')
 
 lbs_label = Label(root, text="Sources")
-lbdh_label = Label(root, text="DH Files")
+lbdh_label = Label(root, text=DH_FILE_CALLED+" Files")
 
 lbs_label.grid(row = 0, column = 2, pady = 5,padx=8,sticky = 'ew')
 lbdh_label.grid(row = 3, column = 2, pady = 0,padx=8,sticky = 'ew')
@@ -227,10 +229,10 @@ def remove_stopwords(wl):
 
 def create_dh_text(event=""):
     if not nn.get():
-        update_lb("DH is only for text with n:n")
+        update_lb(DH_FILE_CALLED+" is only for text with n:n")
         return
     if len(dhdict) == 0:
-        update_lb("Need at least one DH file")
+        update_lb("Need at least one "+DH_FILE_CALLED+" file")
         return
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
@@ -247,7 +249,7 @@ def create_dh_text(event=""):
                         if re.match(r"^"+" ".join(threeparts[1:-1]), textname):#" ".join(threeparts[1:-1]) in textname:
                             keys.append(dhname)
                     else:
-                        update_lb(dhname + " does not follow the naming rule.\n DH files must have 'one word group name' + 'Text file name' 'Marking' with spaces")
+                        update_lb(dhname + " does not follow the naming rule.\n"+DH_FILE_CALLED+" files must have 'one word group name' + 'Text file name' 'Marking' with spaces")
                         return
                 if len(keys) > 0:
                     d[textname] = keys
@@ -556,11 +558,11 @@ menu_file = Menu(m)
 # adding cascades to menu m
 m.add_cascade(label='FILE',menu=menu_file,underline=0)
 menu_file.add_command(label='Load Text',under=0,command=load_source)
-menu_file.add_command(label='Load DH File',under=0,command=load_dh)
-menu_file.add_command(label='Remove File',under=0,command=remove_file)
+menu_file.add_command(label="Load "+DH_FILE_CALLED+" File",under=0,command=load_dh)
+menu_file.add_command(label='Remove Sources',under=0,command=remove_file)
 
 menu_dh = Menu(m)
-m.add_cascade(label='DH',menu=menu_dh,underline=0)
+m.add_cascade(label=DH_FILE_CALLED,menu=menu_dh,underline=0)
 menu_dh.add_command(label='Create',under=0,command=create_dh_text)
 
 menu_cfd = Menu(m)
