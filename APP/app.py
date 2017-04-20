@@ -29,7 +29,7 @@ fdistdict = {}
 
 root = tkinter.Tk()
 # set the title of the app
-root.title("test")
+root.title("BOA") #
 
 # create Listbox
 # main list box on the left
@@ -163,14 +163,14 @@ def update_lb(text):
 
 def plot_fd():
     fd = create_fd()
-    if len(fd) > 0:
+    if fd != None:
         fd.plot()
 
 def plot_fd_percentile():
     fd = create_fd()
     wl = []
     d = {}
-    if len(fd) > 0:
+    if fd != None:
         total = len(FreqDist(remove_stopwords(word_tokenize(sourcedict[lbs.get('active')]))))
         #print(str(total))
         for word in fd:
@@ -488,12 +488,12 @@ def dictToFile(text, name):
     
 def plot_cfd():
     freqcfd = create_cfd()
-    if len(freqcfd) > 0:
+    if freqcfd != None:
         freqcfd.plot(title='Conditional Frequency Distribution')
 
 def plot_cfd_percentile():
     freqcfd = create_cfd()
-    if len(freqcfd) > 0:
+    if freqcfd != None:
         for filename in freqcfd:
             total = len(remove_stopwords(word_tokenize(sourcedict[filename])))
             for word in freqcfd[filename]:
@@ -567,13 +567,29 @@ menu_dh.add_command(label='Create',under=0,command=create_dh_text)
 
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
-menu_cfd.add_command(label='Plot Value',under=0,command=plot_cfd)
-menu_cfd.add_command(label='Plot Percentile',under=0,command=plot_cfd_percentile)
+menu_cfd.add_command(label='Plot by Value',under=0,command=plot_cfd)
+menu_cfd.add_command(label='Plot by Percentile',under=0,command=plot_cfd_percentile)
         
 menu_fdist = Menu(m)
 m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
-menu_fdist.add_command(label='Plot Value',under=0,command=plot_fd)
-menu_fdist.add_command(label='Plot Percentile',under=0,command=plot_fd_percentile)
+menu_fdist.add_command(label='Plot by Value',under=0,command=plot_fd)
+menu_fdist.add_command(label='Plot by Percentile',under=0,command=plot_fd_percentile)
+
+def marking_help():
+    update_lb("Marking files are list of chapters and verses that define Pentateuch sources.\n"+
+              "\n" + "Apply .....")
+
+def cfd_help():
+    update_lb("CFD")
+
+def fd_help():
+    update_lb("CFD")
+
+menu_help = Menu(m)
+m.add_cascade(label='Help',menu=menu_help,underline=0)
+menu_help.add_command(label=DH_FILE_CALLED,under=0,command=marking_help)
+menu_help.add_command(label='CFD',under=0,command=cfd_help)
+
 # load text files from "text" folder if it exits
 if os.path.isdir(directory+ "text"):
     file_directories = []
