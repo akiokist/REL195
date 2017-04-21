@@ -83,11 +83,15 @@ naming = BooleanVar()
 naming.set(False)
 Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = 7, column = 2, pady = 0,padx=8,sticky = 'w')
 
+buffer = StringVar(root)
+buffer.set("20")
+n_spin = Spinbox(root, from_=1, to=999, textvariable=buffer,width=3)
+n_spin.grid(row = 7, column = 1,columnspan = 1, sticky = 'ew',  padx = 2, pady = 2)
 # set entry box
-buffer = StringVar()
+search_buffer = StringVar()
 #buffer.set("20")
-e = Entry(root, textvariable = buffer)
-e.grid(row = 7, column = 0,columnspan = 2, sticky = 'ew',  padx = 20, pady = 7)
+e = Entry(root, textvariable = search_buffer)
+e.grid(row = 7, column = 0,columnspan = 1, sticky = 'ew',  padx = 10, pady = 7)
 
 # the file type that the load methods accept
 fTyp=[('text file','*.txt')]
@@ -563,7 +567,7 @@ menu_file.add_command(label='Remove Sources',under=0,command=remove_file)
 
 menu_dh = Menu(m)
 m.add_cascade(label=DH_FILE_CALLED,menu=menu_dh,underline=0)
-menu_dh.add_command(label='Create',under=0,command=create_dh_text)
+menu_dh.add_command(label='Apply',under=0,command=create_dh_text)
 
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
@@ -575,6 +579,113 @@ m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
 menu_fdist.add_command(label='Plot by Value',under=0,command=plot_fd)
 menu_fdist.add_command(label='Plot by Percentile',under=0,command=plot_fd_percentile)
 
+from nltk.collocations import BigramCollocationFinder
+from nltk.metrics import BigramAssocMeasures
+from nltk.collocations import TrigramCollocationFinder
+from nltk.metrics import TrigramAssocMeasures
+from nltk.collocations import *
+bigram_measures = nltk.collocations.BigramAssocMeasures()
+from nltk.metrics.spearman import *
+
+def bigram():
+    if lbs.curselection() == ():
+        if len(sourcedict) == 0:
+            update_lb("Need at least one Source file")
+            return
+        elif len(sourcedict) > 1:
+            update_lb("Need to select one Source file")
+            return
+    thismuch = 20
+    if buffer.get().isdigit():
+        thismuch = int(buffer.get())    
+    filename = lbs.get('active')
+    wl = [w.lower() for w in word_tokenize(sourcedict[filename])]
+    bcf = BigramCollocationFinder.from_words(wl)
+    if bcf == None:
+        return
+    stop = set(stopwords)
+    filter_stop = lambda w:len(w)<3 or w in stop
+    bcf.apply_word_filter(filter_stop)
+        #bcf.plot()
+    #bcf[:6]
+    #bcf = bcf.nbest(BigramAssocMeasures.likelihood_ratio, 5)
+    #scored = bcf.score_ngrams(bigram_measures.raw_freq)
+    #print(list(ranks_from_scores(bcf, rank_gap=5)))
+    bcf = sorted(bcf.ngram_fd.items(), key=lambda t: (-t[1], t[0]))
+    bcf = bcf[:thismuch]
+    word_pairs = []
+    word_values = []
+    odd =False
+    for tup in bcf:
+        pair = ""
+        if odd:
+            pair = "\n"
+            odd = False
+        else:
+            odd = True
+        pair += tup[0][0] + " " +  tup[0][1]
+        word_pairs.append(pair)
+        word_values.append(int(tup[1]))
+    X = np.arange(len(word_values))
+    pl.bar(X, word_values, align='center', width=0.5)
+    pl.xticks(X, word_pairs)
+    ymax = max(word_values) + 1
+    pl.ylim(0, ymax)
+    pl.show()
+
+# lots of code duplication, will be modified soon
+def trigram():
+    if lbs.curselection() == ():
+        if len(sourcedict) == 0:
+            update_lb("Need at least one Source file")
+            return
+        elif len(sourcedict) > 1:
+            update_lb("Need to select one Source file")
+            return
+    thismuch = 20
+    if buffer.get().isdigit():
+        thismuch = int(buffer.get())    
+    filename = lbs.get('active')
+    wl = [w.lower() for w in word_tokenize(sourcedict[filename])]
+    bcf = TrigramCollocationFinder.from_words(wl)
+    if bcf == None:
+        return
+    stop = set(stopwords)
+    filter_stop = lambda w:len(w)<3 or w in stop
+    bcf.apply_word_filter(filter_stop)
+    bcf = sorted(bcf.ngram_fd.items(), key=lambda t: (-t[1], t[0]))
+    bcf = bcf[:thismuch]
+    word_pairs = []
+    word_values = []
+    row = 0
+    for tup in bcf:
+        pair = ""
+        if row == 0:
+            row = 1
+        elif row == 1:
+            pair = "\n"
+            row = 2
+        else:
+            pair = "\n\n"
+            row = 0
+        pair += tup[0][0] + " " +  tup[0][1] + " " + tup[0][2]
+        word_pairs.append(pair)
+        word_values.append(int(tup[1]))
+    X = np.arange(len(word_values))
+    pl.bar(X, word_values, align='center', width=0.5)
+    pl.xticks(X, word_pairs)
+    ymax = max(word_values) + 1
+    pl.ylim(0, ymax)
+    pl.show()
+    
+menu_n_gram = Menu(m)
+m.add_cascade(label='N-Gram',menu=menu_n_gram,underline=0)
+menu_n_gram.add_command(label='Bigram',under=0,command=bigram)
+menu_n_gram.add_command(label='Trigram',under=0,command=trigram)
+
+
+
+#methods for help
 def marking_help():
     update_lb("Marking files are list of chapters and verses that define Pentateuch sources.\n"+
               "\n" + "Apply .....")
