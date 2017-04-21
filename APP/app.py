@@ -170,6 +170,14 @@ def plot_fd():
     if fd != None:
         fd.plot()
 
+def plot_hapax():
+    fd = create_fd(False)
+    if fd != None:
+        update_lb("Hapax(words that only show up once)")
+        for word in fd:
+            if fd[word] == 1 and not re.match("\d+:\d+",word):
+                lb.insert('end',word)
+
 def plot_fd_percentile():
     fd = create_fd()
     wl = []
@@ -188,7 +196,7 @@ def plot_fd_percentile():
         pl.ylim(0, ymax)
         pl.show()
 
-def create_fd():
+def create_fd(use_buf=True):
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
             update_lb("Need at least one Source file")
@@ -199,8 +207,9 @@ def create_fd():
     thismuch = 20
     if buffer.get().isdigit():
         thismuch = int(buffer.get())
-        
     filename = lbs.get('active')
+    if use_buf == False:
+        return FreqDist(remove_stopwords(word_tokenize(sourcedict[filename])))
     if filename in fdistdict:
         if len(fdistdict[filename]) > thismuch:
             fdistdict[filename] = common_fdist(fdistdict[filename], thismuch)
@@ -213,7 +222,7 @@ def create_fd():
         fd = common_fdist(fd, thismuch)
         fdistdict[filename] = fd
     return fd
-        
+
 def common_fdist(fd, thismuch):
     tup = sorted(fd.items(), key=itemgetter(1))
     tup = tup[len(tup)-thismuch:] # use variable
@@ -578,6 +587,7 @@ menu_fdist = Menu(m)
 m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
 menu_fdist.add_command(label='Plot by Value',under=0,command=plot_fd)
 menu_fdist.add_command(label='Plot by Percentile',under=0,command=plot_fd_percentile)
+menu_fdist.add_command(label='Plot Hapax',under=0,command=plot_hapax)
 
 from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
@@ -606,11 +616,6 @@ def bigram():
     stop = set(stopwords)
     filter_stop = lambda w:len(w)<3 or w in stop
     bcf.apply_word_filter(filter_stop)
-        #bcf.plot()
-    #bcf[:6]
-    #bcf = bcf.nbest(BigramAssocMeasures.likelihood_ratio, 5)
-    #scored = bcf.score_ngrams(bigram_measures.raw_freq)
-    #print(list(ranks_from_scores(bcf, rank_gap=5)))
     bcf = sorted(bcf.ngram_fd.items(), key=lambda t: (-t[1], t[0]))
     bcf = bcf[:thismuch]
     word_pairs = []
@@ -677,13 +682,11 @@ def trigram():
     ymax = max(word_values) + 1
     pl.ylim(0, ymax)
     pl.show()
-    
+# add the n-gram menu    
 menu_n_gram = Menu(m)
 m.add_cascade(label='N-Gram',menu=menu_n_gram,underline=0)
 menu_n_gram.add_command(label='Bigram',under=0,command=bigram)
 menu_n_gram.add_command(label='Trigram',under=0,command=trigram)
-
-
 
 #methods for help
 def marking_help():
