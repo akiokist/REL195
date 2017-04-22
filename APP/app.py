@@ -14,6 +14,11 @@ from nltk.corpus import stopwords
 stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
+import tkinter.font
+#english_words = set(nltk.corpus.words.words())
+import enchant
+english_words = enchant.Dict("en_US")
+#d.check("Hello")
 
 DH_FILE_CALLED = "Marking"
 
@@ -34,6 +39,7 @@ root.title("BOA") #
 # create Listbox
 # main list box on the left
 lb = Listbox(root)
+lb.config(font=("Times",11))
 # list box for source files on top right
 lbs = Listbox(root)
 # list box for dh files on bottum right
@@ -172,11 +178,25 @@ def plot_fd():
 
 def plot_hapax():
     fd = create_fd(False)
+    count = 0
     if fd != None:
-        update_lb("Hapax(words that only show up once)")
+        #update_lb("Hapax(words that only show up once)")
+        display_string = ""
         for word in fd:
-            if fd[word] == 1 and not re.match("\d+:\d+",word):
-                lb.insert('end',word)
+            #if word[len(word)-2:] == "ed":
+             #   print("ends with ed:" + word)
+            if fd[word] == 1 and not re.match("\d+:\d+",word)  and not english_words.check(word.lower()) and not word[0] == "-"and not word[-1] == "-":
+                count = count+1
+                if count % 8 ==0:
+                    display_string += word + "\n"
+                else:
+                    display_string += word + ", "
+        #lb.insert
+        #lb.config(font = tkinter.font.Font(size=14))
+        #            Times
+        update_lb(display_string) #
+        #lb.config(font = tkinter.font.Font(size=11))
+        #lb.config(font=("Times",11))
 
 def plot_fd_percentile():
     fd = create_fd()

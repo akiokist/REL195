@@ -53,6 +53,10 @@ def write_chapter(file, chapter, after):
             content = re.sub("<a href=[^/]+span class[^/]+popup\">"," (",verse_context[1])
             content = re.sub("</span></a>",")",content)
             content = re.sub("</div><div class=[^/]+>","",content)
+            content = re.sub("’","'",content)
+            #if "—" in content[len(content)-3:]:
+            #    print(content[len(content)-3:])
+            content = re.sub("—","-",content)
             content = str(unicodedata.normalize('NFKD', content).encode('ascii','ignore'))
             content = chapter + ":" + verse_num + " " + content[2:-3] + "\n\n"
             file.write(content)
@@ -66,7 +70,7 @@ if os.path.isdir(directory + "/html"):
 
 for filename in os.listdir(path):
     if filename.split(".")[-1] == "htm":
-        file = open(path + "/" + filename, 'r', encoding='utf-8')
+        file = open(path + "/" + filename, 'r',encoding='utf-8') #’ 
         text = file.read()
         files.append(text)
         file.close()
