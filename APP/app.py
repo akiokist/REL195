@@ -179,24 +179,33 @@ def plot_fd():
 def plot_hapax():
     fd = create_fd(False)
     count = 0
+    english_count = 0
     if fd != None:
         #update_lb("Hapax(words that only show up once)")
         display_string = ""
+        hapax = ""
+        english_hapax = ""
         for word in fd:
-            #if word[len(word)-2:] == "ed":
-             #   print("ends with ed:" + word)
-            if fd[word] == 1 and not re.match("\d+:\d+",word)  and not english_words.check(word.lower()) and not word[0] == "-"and not word[-1] == "-":
+            if english_words.check(word.lower()) and not re.match("\d",word):
+                english_count = english_count +1
+                if english_count % 8 ==0:
+                    english_hapax += word + "\n"
+                else:
+                    english_hapax += word + ", "
+            elif fd[word] == 1 and not re.match("\d",word) and not word[0] == "-"and not word[-1] == "-":
                 count = count+1
                 if count % 8 ==0:
-                    display_string += word + "\n"
+                    hapax += word + "\n"
                 else:
-                    display_string += word + ", "
-        #lb.insert
-        #lb.config(font = tkinter.font.Font(size=14))
-        #            Times
-        update_lb(display_string) #
-        #lb.config(font = tkinter.font.Font(size=11))
-        #lb.config(font=("Times",11))
+                    hapax += word + ", "
+        if count > 0:
+            display_string += "Hapax (words that only show up once)\n\n   There are " + str(count) +" non-English Hapax in this source\n\n" + hapax[:len(hapax)-2]
+        if english_count > 0:
+            display_string += "\n\n" + "    These are "+ str(english_count) +" English Hapax in this source\n\n" + english_hapax
+        if count + english_count == 0:
+            update_lb("Hapax (words that only show up once)\n\n" + "There were no Hapax in this source")
+        else:
+            update_lb(display_string)
 
 def plot_fd_percentile():
     fd = create_fd()
