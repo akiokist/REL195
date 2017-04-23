@@ -89,13 +89,13 @@ naming = BooleanVar()
 naming.set(False)
 Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = 7, column = 2, pady = 0,padx=8,sticky = 'w')
 
+# set spin box
 buffer = StringVar(root)
 buffer.set("20")
 n_spin = Spinbox(root, from_=1, to=999, textvariable=buffer,width=3)
 n_spin.grid(row = 7, column = 1,columnspan = 1, sticky = 'ew',  padx = 2, pady = 2)
-# set entry box
+# set serarch box
 search_buffer = StringVar()
-#buffer.set("20")
 e = Entry(root, textvariable = search_buffer)
 e.grid(row = 7, column = 0,columnspan = 1, sticky = 'ew',  padx = 10, pady = 7)
 
