@@ -711,16 +711,34 @@ def concordance():
         thismuch = int(buffer.get())
     filename = lbs.get('active')
     text = sourcedict[filename]
-    text_dict =  fileToDict(text)
-    #result = text.concordance("all")
     display_result = ""
-    search_word = search_buffer.get()
-    for chap in text_dict:
-        for verse in text_dict[chap]:
-            word = text_dict[chap][verse]
-            if search_word in word:
-                word = re.sub(search_word,'"'+search_word+'"',word)
-                display_result += str(chap)+":"+str(verse)+word
+    search_word = search_buffer.get().lower()
+    if search_word == "":
+        return
+    if nn.get():
+        text_dict =  fileToDict(text)
+        for chap in text_dict:
+            for verse in text_dict[chap]:
+                word = text_dict[chap][verse]
+                if search_word in word.lower():
+                    word = re.sub(search_word,'"'+search_word+'"',word)
+                    display_result += str(chap)+":"+str(verse)+word
+    else:
+        wl = word_tokenize(text)
+        start = thismuch
+        end = len(wl)-thismuch
+        for index in range(0,start):
+            if wl[index].lower() == search_word:
+                display_result += " ".join(wl[0:index+1])
+                display_result +="\n\n"
+        for  index in range(start,end):
+            if wl[index].lower() == search_word:
+                display_result += " ".join(wl[index-thismuch:index+thismuch+1])
+                display_result +="\n\n"
+        for  index in range(end,end+thismuch):
+            if wl[index].lower() == search_word:
+                display_result += " ".join(wl[index:])
+                display_result +="\n\n"
     update_lb(display_result)
     
 menu_concordance  = Menu(m)
