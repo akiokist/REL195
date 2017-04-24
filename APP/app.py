@@ -588,12 +588,12 @@ menu_dh.add_command(label='Apply',under=0,command=create_dh_text)
 menu_cfd = Menu(m)
 m.add_cascade(label='CFD',menu=menu_cfd,underline=0)
 menu_cfd.add_command(label='Plot by Value',under=0,command=plot_cfd)
-menu_cfd.add_command(label='Plot by Percentile',under=0,command=plot_cfd_percentile)
+menu_cfd.add_command(label='Plot by Percentage',under=0,command=plot_cfd_percentile)
         
 menu_fdist = Menu(m)
 m.add_cascade(label='Fdist',menu=menu_fdist,underline=0)
 menu_fdist.add_command(label='Plot by Value',under=0,command=plot_fd)
-menu_fdist.add_command(label='Plot by Percentile',under=0,command=plot_fd_percentile)
+menu_fdist.add_command(label='Plot by Percentage',under=0,command=plot_fd_percentile)
 menu_fdist.add_command(label='Plot Hapax',under=0,command=plot_hapax)
 
 from nltk.collocations import BigramCollocationFinder
