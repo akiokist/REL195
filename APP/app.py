@@ -15,31 +15,25 @@ stopwords = nltk.corpus.stopwords.words('english')
 import pylab as pl
 import numpy as np
 import tkinter.font
-#english_words = set(nltk.corpus.words.words())
 import enchant
 english_words = enchant.Dict("en_US")
-#d.check("Hello")
 
+root = tkinter.Tk()
+# set the title of the app
+root.title("BOA") 
 DH_FILE_CALLED = "Marking"
-
 # dict of source files, key file name, value the string of the file
 sourcedict = {}
 # dict of DH files
 dhdict= {}
 # save the current directory
 directory = os.getcwd() + "/"
-
 # save the fdist, key is the file name and the value is the fd dictionary
 fdistdict = {}
 
-root = tkinter.Tk()
-# set the title of the app
-root.title("BOA") #
-
-# create Listbox
-# main list box on the left
-lb = Listbox(root)
-lb.config(font=("Times",11))
+# create Listboxs
+# main list box on the left with font 11
+lb = Listbox(root,font=("Times",11))
 # list box for source files on top right
 lbs = Listbox(root)
 # list box for dh files on bottum right
@@ -52,8 +46,7 @@ ssb1 = Scrollbar(root, orient = 'v', command = lbs.yview)
 ssb2 = Scrollbar(root, orient = 'h', command = lbs.xview)
 dhsb1 = Scrollbar(root, orient = 'v', command = lbdh.yview)
 dhsb2 = Scrollbar(root, orient = 'h', command = lbdh.xview)
-
-# Listbox settings
+# add the Scrollbar to the Listbox
 lb.configure(yscrollcommand = sb1.set)
 lb.configure(xscrollcommand = sb2.set)
 lbs.configure(yscrollcommand = ssb1.set)
@@ -165,7 +158,6 @@ def update_display_s(event):
 def update_display_dh(event):
     if not lbdh.get('active') is '':
         update_lb(dhdict[lbdh.get('active')])
-
 def update_lb(text):
     lb.delete(0,END)
     for s in text.split("\n"):
@@ -327,8 +319,7 @@ def remove_files(d):
         lbdh.insert('end', key)
     for key in sourcedict:
         lbs.insert('end', key)
-    
-    
+        
 def create_dh_source(sourcename,whole_text, keys):
     for key in keys:
         text = ParseMarking(whole_text, dhdict[key])
@@ -345,15 +336,6 @@ def create_dh_source(sourcename,whole_text, keys):
         file.close()
         sourcedict[name] = content
     update_lb(content)
-        #dhdict.pop(key)
-    #sourcedict.pop(sourcename)
-    
-    #lbdh.delete(0,END)
-    #lbs.delete(0,END)
-    #for key in dhdict:
-     #   lbdh.insert('end', key)
-    #for key in sourcedict:
-     #       lbs.insert('end', key)
         
 def fileToDict(text):
     chapDict = {}
@@ -363,7 +345,7 @@ def fileToDict(text):
         while i < length and not text[i].isdigit():
             i += 1
     start = i
-    while i < length and text[i] != ":": #.isdigit():#  now goes as long there is an integer
+    while i < length and text[i] != ":": #.isdigit():#  now goes as long as  there is an integer
         i += 1
     while i < length:
         currentChap = int(text[start:i])
@@ -376,7 +358,6 @@ def fileToDict(text):
             while i < length and text[i].isdigit():
                 i += 1
             currentVerse = int(text[start:i])
-
             start = i
             #set i to be the end of this verse
             while not end_of_verse:
@@ -392,7 +373,6 @@ def fileToDict(text):
                     i = end
                     end_of_verse = True
             chapDict[currentChap][currentVerse] = text[start:i]
-            
             start = i
             while i < length and text[i] != ":":#.isdigit():# 
                 i += 1
@@ -451,7 +431,6 @@ def getChapVerWord(token):
                 if token[i] == "-":
                     word = int(token[indexOfIdentifier+1:i]) # ":" between "." is the verse number
     return [chap,verse,word]
-
 
 def create_newsorce(fromList, toList, text):
     subD = {}
@@ -561,9 +540,8 @@ def create_cfd():
             tup.append((key,word))
     cfd = nltk.ConditionalFreqDist(tup)
     for key in cfd:
-        tup = sorted(cfd[key].items(), key=itemgetter(1))
-        
-        tup = tup[len(tup)-thismuch:] # use variable        
+        tup = sorted(cfd[key].items(), key=itemgetter(1))        
+        tup = tup[len(tup)-thismuch:] # use variable
         for l in tup:
             freqdict[key].append(l[0])
             for var in range(0, l[1]):
@@ -667,7 +645,7 @@ def bigram():
     pl.ylim(0, ymax)
     pl.show()
 
-# lots of code duplication, will be modified soon
+# lots of code duplication, nice if it can be removed someday
 def trigram():
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
@@ -716,6 +694,38 @@ menu_n_gram = Menu(m)
 m.add_cascade(label='N-Gram',menu=menu_n_gram,underline=0)
 menu_n_gram.add_command(label='Bigram',under=0,command=bigram)
 menu_n_gram.add_command(label='Trigram',under=0,command=trigram)
+
+import nltk.corpus  
+from nltk.text import Text
+
+def concordance():
+    if lbs.curselection() == ():
+        if len(sourcedict) == 0:
+            update_lb("Need at least one Source file")
+            return
+        elif len(sourcedict) > 1:
+            update_lb("Need to select one Source file")
+            return
+    thismuch = 5
+    if buffer.get().isdigit():
+        thismuch = int(buffer.get())
+    filename = lbs.get('active')
+    text = sourcedict[filename]
+    text_dict =  fileToDict(text)
+    #result = text.concordance("all")
+    display_result = ""
+    search_word = search_buffer.get()
+    for chap in text_dict:
+        for verse in text_dict[chap]:
+            word = text_dict[chap][verse]
+            if search_word in word:
+                word = re.sub(search_word,'"'+search_word+'"',word)
+                display_result += str(chap)+":"+str(verse)+word
+    update_lb(display_result)
+    
+menu_concordance  = Menu(m)
+m.add_cascade(label='Concordance',menu=menu_concordance,underline=0)
+menu_concordance.add_command(label='Search',under=0,command=concordance)
 
 #methods for help
 def marking_help():
