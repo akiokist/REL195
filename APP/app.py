@@ -33,7 +33,7 @@ fdistdict = {}
 
 # create Listboxs
 # main list box on the left with font 11
-lb = Listbox(root,font=("Times",11))
+lb = Listbox(root,font=("consolas",11)) #Times
 # list box for source files on top right
 lbs = Listbox(root)
 # list box for dh files on bottum right
@@ -744,8 +744,16 @@ menu_concordance.add_command(label='Search',under=0,command=concordance)
 
 #methods for help
 def marking_help():
-    update_lb("Marking files are list of chapters and verses that define Pentateuch sources.\n"+
-              "\n" + "Apply .....")
+    update_lb("\nMarking files are lists of chapters and verses that define Pentateuchal sources.\n"+
+              "These could be individual verses or a span of contiguous verses.\n"
+              "The file contents appear, for example, as\n\n"+
+              " 1:7,\n 1:13-14,\n 2:23.8-2:25.99,\n (...)\n\n"+
+              "With the filename denoting a particular source, such as “P Exodus Marking.”\n"+
+              "To use the Marking function, the user chooses a book of the Bible from the\n"+
+              "“Sources” box, and a marking file from the “Marking Files” box,\n"+
+              "then select Apply in the Marking toolbar menu. The results will display those\n"+
+              "Bible verses corresponding to the user-selected source text."
+              )
 
 def cfd_help():
     update_lb("CFD")
@@ -767,7 +775,6 @@ if os.path.isdir(directory+ "text"):
     if len(file_directories) > 0:
         open_files(file_directories, sourcedict, lbs)
 
-
 # load text files from "dh" folder if it exits
 if os.path.isdir(directory+ "dh"):
     file_directories = []
@@ -777,8 +784,20 @@ if os.path.isdir(directory+ "dh"):
     if len(file_directories) > 0:
         open_files(file_directories, dhdict, lbdh)
 
-if len(sourcedict) >0:
-    update_lb(sourcedict[lbs.get(0)])
-
+#if len(sourcedict) >0:
+#   update_lb(sourcedict[lbs.get(0)])
+# set the welcome screen
+update_lb(" ____   ___    _"+"\n"+
+          "| __ ) / _ \  / \ "  +"\n"+
+          "|  _ \| | | |/ _ \  "+"\n"+
+          "| |_) | |_| / ___ \ "+"\n"+"|____/ \___/_/   \_\ "
+          +"\nWelcome to BOA, the Biblical Origins Analyzer!\n"+
+          "This program gathers together several text analysis tools "+
+          "from the Python-based NLTK (Natural Language Toolkit)\n"+
+          "suite into one easy-to-use space for Old Testament scholars.\n"+
+          "Written in Python 3\n"+
+          "Created by Barry Bandstra, Ph.D, Akio Kist-Okazaki and Tristan Engel"
+          )
+          
 # this starts the app
 root.mainloop()
