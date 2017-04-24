@@ -695,9 +695,6 @@ m.add_cascade(label='N-Gram',menu=menu_n_gram,underline=0)
 menu_n_gram.add_command(label='Bigram',under=0,command=bigram)
 menu_n_gram.add_command(label='Trigram',under=0,command=trigram)
 
-import nltk.corpus  
-from nltk.text import Text
-
 def concordance():
     if lbs.curselection() == ():
         if len(sourcedict) == 0:
