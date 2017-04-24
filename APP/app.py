@@ -32,8 +32,8 @@ directory = os.getcwd() + "/"
 fdistdict = {}
 
 # create Listboxs
-# main list box on the left with font 11
-lb = Listbox(root,font=("consolas",11)) #Times
+# now a Text on the left with font 11
+lb = Text(root,state=DISABLED,font=("consolas",11),width=50)##Listbox(root,font=("consolas",11)) #Times
 # list box for source files on top right
 lbs = Listbox(root)
 # list box for dh files on bottum right
@@ -54,7 +54,7 @@ lbs.configure(xscrollcommand = ssb2.set)
 lbdh.configure(yscrollcommand = dhsb1.set)
 lbdh.configure(xscrollcommand = dhsb2.set)
 
-lb.grid(row = 0, column = 0, sticky = 'nsew',  padx = 10, pady = 0,ipadx = 180,rowspan=6) # ipadx = 200, ipady = 140,
+lb.grid(row = 0, column = 0, sticky = 'nsew',  padx = 10, pady = 0,ipadx = 50,rowspan=6) # ipadx = 200, ipady = 140,
 lbs.grid(row = 1, column = 2, pady = 0,padx=8,sticky = 'ns')#ipady = 40
 lbdh.grid(row = 4, column = 2, pady = 0,padx=8, sticky = 'ns')#,ipady = 30
 
@@ -126,12 +126,12 @@ def remove_source(event=""):
     if not lbs.get('active') is '':
         sourcedict.pop(lbs.get('active'))
         lbs.delete('active')
-        lb.delete(0,END)
+        lb.delete(1.0,END)
 def remove_dh(event):
     if not lbdh.get('active') is '':
         dhdict.pop(lbdh.get('active'))
         lbdh.delete('active')
-        lb.delete(0,END)
+        lb.delete(1.0,END)
 
 def remove_file(event = ""):
     iDir='c:/'
@@ -140,7 +140,7 @@ def remove_file(event = ""):
     if file_directory is not "":
         filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
         filename = filename[1:len(filename)-4]
-        lb.delete(0,END)
+        lb.delete(1.0,END)
         if filename in sourcedict:
             sourcedict.pop(filename)
             lbs.delete(0,END)
@@ -159,9 +159,12 @@ def update_display_dh(event):
     if not lbdh.get('active') is '':
         update_lb(dhdict[lbdh.get('active')])
 def update_lb(text):
-    lb.delete(0,END)
-    for s in text.split("\n"):
-        lb.insert('end', s)
+    lb.config(state=NORMAL)
+    lb.delete(1.0,END)
+    lb.insert('end',text)
+    #for s in text.split("\n"):
+    #    lb.insert('end', s)
+    lb.config(state=DISABLED)
 
 def plot_fd():
     fd = create_fd()
@@ -173,7 +176,6 @@ def plot_hapax():
     count = 0
     english_count = 0
     if fd != None:
-        #update_lb("Hapax(words that only show up once)")
         display_string = ""
         hapax = ""
         english_hapax = ""
@@ -331,7 +333,11 @@ def create_dh_source(sourcename,whole_text, keys):
         content = name + "\n\n"
         for chap in sorted(text.keys()):
             for verse in sorted(text[chap].keys()):
-                content += str(chap) + ":" + str(verse) + " " +text[chap][verse]
+                # if no two new line character at the end, add it
+                if text[chap][verse][len(text[chap][verse])-2:] != "\n\n":
+                    content += str(chap) + ":" + str(verse) + " " +text[chap][verse] + "\n\n"
+                else:
+                    content += str(chap) + ":" + str(verse) + " " +text[chap][verse]
         file.write(content)
         file.close()
         sourcedict[name] = content
@@ -796,7 +802,7 @@ update_lb(" ____   ___    _"+"\n"+
           "from the Python-based NLTK (Natural Language Toolkit)\n"+
           "suite into one easy-to-use space for Old Testament scholars.\n"+
           "Written in Python 3\n"+
-          "Created by Barry Bandstra, Ph.D, Akio Kist-Okazaki and Tristan Engel"
+          "Created by Akio Kist-Okazaki and Tristan Engel"
           )
           
 # this starts the app
