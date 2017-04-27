@@ -41,56 +41,75 @@ lbdh = Listbox(root, selectmode=MULTIPLE)
 
 # create Scrollbar vertical and horizontal for each list box
 sb1 = Scrollbar(root, orient = 'v', command = lb.yview)
-sb2 = Scrollbar(root, orient = 'h', command = lb.xview)
 ssb1 = Scrollbar(root, orient = 'v', command = lbs.yview)
 ssb2 = Scrollbar(root, orient = 'h', command = lbs.xview)
 dhsb1 = Scrollbar(root, orient = 'v', command = lbdh.yview)
 dhsb2 = Scrollbar(root, orient = 'h', command = lbdh.xview)
 # add the Scrollbar to the Listbox
 lb.configure(yscrollcommand = sb1.set)
-lb.configure(xscrollcommand = sb2.set)
 lbs.configure(yscrollcommand = ssb1.set)
 lbs.configure(xscrollcommand = ssb2.set)
 lbdh.configure(yscrollcommand = dhsb1.set)
 lbdh.configure(xscrollcommand = dhsb2.set)
 
-lb.grid(row = 0, column = 0, sticky = 'nsew',  padx = 10, pady = 0,ipadx = 50,rowspan=6) # ipadx = 200, ipady = 140,
-lbs.grid(row = 1, column = 2, pady = 0,padx=8,sticky = 'ns')#ipady = 40
-lbdh.grid(row = 4, column = 2, pady = 0,padx=8, sticky = 'ns')#,ipady = 30
-
 lbdh.configure(exportselection=False)
 lbs.configure(exportselection=False)
-
-sb1.grid(row = 0, column = 1, sticky = 'ns',rowspan=6)
-sb2.grid(row = 6, column = 0, sticky = 'ew')
-ssb1.grid(row = 1, column = 3, sticky = 'ns')
-ssb2.grid(row = 2, column = 2, sticky = 'ew')
-dhsb1.grid(row = 4, column = 3, sticky = 'ns')
-dhsb2.grid(row = 5, column = 2, sticky = 'ew')
-
-lbs_label = Label(root, text="Sources")
-lbdh_label = Label(root, text=DH_FILE_CALLED+" Files")
-
-lbs_label.grid(row = 0, column = 2, pady = 5,padx=8,sticky = 'ew')
-lbdh_label.grid(row = 3, column = 2, pady = 0,padx=8,sticky = 'ew')
-
-# create a check box for two options
-nn = BooleanVar()
-nn.set(True)
-Checkbutton(text = 'Source with "n:n"', variable = nn).grid(row = 6, column = 2, pady = 0,padx=8,sticky = 'w')
-naming = BooleanVar()
-naming.set(False)
-Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = 7, column = 2, pady = 0,padx=8,sticky = 'w')
 
 # set spin box
 buffer = StringVar(root)
 buffer.set("20")
 n_spin = Spinbox(root, from_=1, to=999, textvariable=buffer,width=3)
-n_spin.grid(row = 7, column = 1,columnspan = 1, sticky = 'ew',  padx = 2, pady = 2)
+
 # set serarch box
 search_buffer = StringVar()
 e = Entry(root, textvariable = search_buffer)
-e.grid(row = 7, column = 0,columnspan = 1, sticky = 'ew',  padx = 10, pady = 7)
+
+# set the size of things
+lb_size = 180
+# 40% each, total 80 %
+side_ld_size =  int(lb_size/2.5)
+# 5% each 20% total
+reg_size = int(lb_size/20)
+lb_size = lb_size-reg_size
+left = 30
+right = 10
+pad = 3
+search_width = int(left/1.5)
+spin_width = int(left/6)
+# create labels
+lbs_label = Label(root, text="Sources")
+lbdh_label = Label(root, text=DH_FILE_CALLED+" Files")
+
+# create a check box for two options
+nn = BooleanVar()
+nn.set(True)
+naming = BooleanVar()
+naming.set(False)
+
+# set the grid
+# left side
+lb.grid(row = 0, column = 0, sticky = 'nsew',  padx = pad, pady = pad,rowspan=lb_size,columnspan= left) # ipadx = 200, ipady = 140,
+sb1.grid(row = 0, column = left, sticky = 'ns',rowspan=lb_size)
+#no need of the x scroll bar since we are using Text now
+#sb2 = Scrollbar(root, orient = 'h', command = lb.xview)
+#lb.configure(xscrollcommand = sb2.set)
+#sb2.grid(row = lb_size, column = 0, sticky = 'ew',columnspan= left)
+
+e.grid(row = lb_size+1, column = 0,columnspan = search_width, sticky = 'ew',  padx = 10, pady = 7,rowspan=reg_size)
+n_spin.grid(row = lb_size+1, column = search_width+spin_width,columnspan = spin_width, sticky = 'ew',  padx = 2, pady = 2,rowspan=reg_size)
+
+lbs_label.grid(row = 0, column = left+1, pady = pad,padx=pad,sticky = 'ew',rowspan=reg_size,columnspan=right)
+lbs.grid(row =  reg_size+1,column = left+1, pady = 0,padx=0,sticky = 'ns',rowspan=side_ld_size-reg_size,columnspan=right)#ipady = 40
+ssb1.grid(row =  reg_size+1,column = right +left, sticky = 'ns',columnspan=right,rowspan=side_ld_size-reg_size)
+ssb2.grid(row =  side_ld_size+1, column = left+1, sticky = 'ew',rowspan=reg_size,padx=pad,columnspan=right)
+Checkbutton(text = 'Source with "n:n"', variable = nn).grid(row = side_ld_size+reg_size+1, column = left+1, pady = 0,padx=8,sticky = 'w',rowspan=reg_size,columnspan=right)
+lbdh_label.grid(row = int(reg_size *2+side_ld_size+1), column = left+1, pady = 0,padx=8,sticky = 'ew',rowspan=reg_size,columnspan=right)
+lbdh.grid(row = int(reg_size *3+side_ld_size+1), column = left+1, pady = 0,padx=8, sticky = 'ns',rowspan=side_ld_size-reg_size,columnspan=right)#,ipady = 30
+dhsb1.grid(row = int(reg_size *3+side_ld_size+1), column = right+left, sticky = 'ns',rowspan=side_ld_size)
+dhsb2.grid(row = int(reg_size *2+side_ld_size*2+1),column = left+1,sticky = 'ew',rowspan=reg_size,columnspan=right,padx=pad)
+Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = int(reg_size *3+side_ld_size*2+1), column = left+1, pady = 0,padx=8,sticky = 'w',rowspan=reg_size,columnspan=right)
+
+
 
 # the file type that the load methods accept
 fTyp=[('text file','*.txt')]
@@ -572,9 +591,9 @@ lbs.bind('<Button-3>', update_display_s)
 lbdh.bind('<Button-3>', update_display_dh)
 
 # control the bihavior of resising window, see what happens when you change the size
-root.grid_columnconfigure(0,weight=1)
-root.grid_rowconfigure(1,weight=1)
-root.grid_rowconfigure(2,weight=1)
+#root.grid_columnconfigure(0,weight=1)
+#root.grid_rowconfigure(1,weight=1)
+#root.grid_rowconfigure(2,weight=1)
 
 # adding menu
 m = Menu(root)
@@ -772,26 +791,38 @@ m.add_cascade(label='Help',menu=menu_help,underline=0)
 menu_help.add_command(label=DH_FILE_CALLED,under=0,command=marking_help)
 menu_help.add_command(label='CFD',under=0,command=cfd_help)
 
-# load text files from "text" folder if it exits
-if os.path.isdir(directory+ "text"):
-    file_directories = []
-    for filename in os.listdir(directory + "text"):
-        if filename.split(".")[-1] == "txt":
-            file_directories.append(directory + "text/" + filename)        
-    if len(file_directories) > 0:
-        open_files(file_directories, sourcedict, lbs)
+# if there is a setting file load that to set up the settings
+nn.set(True)
+naming.set(False)
+if os.path.exists(directory + "setting.txt"):
+    set_text = open(directory + "setting.txt").read()
+    if re.match('[^/]*Sources with "n:n"[^/]*=[^/]*False',set_text):
+        nn.set(False)
+    if re.match('[^/]*Marking with "G F Marking"[^/]*=[^/]*True',set_text):
+        naming.set(True)
+    if not re.match('[^/]*Load Marking automatically[^/]*=[^/]*False',set_text):
+        # load text files from "dh" folder if it exits
+        if os.path.isdir(directory+ "dh"):
+            file_directories = []
+            for filename in os.listdir(directory + "dh"):
+                if filename.split(".")[-1] == "txt":
+                    file_directories.append(directory + "dh/" + filename)        
+        if len(file_directories) > 0:
+            open_files(file_directories, dhdict, lbdh)
+    if not re.match('[^/]*Load Sources automatically[^/]*=[^/]*False',set_text):
+        # load text files from "text" folder if it exits
+        if os.path.isdir(directory+ "text"):
+            file_directories = []
+            for filename in os.listdir(directory + "text"):
+                if filename.split(".")[-1] == "txt":
+                    file_directories.append(directory + "text/" + filename)        
+            if len(file_directories) > 0:
+                open_files(file_directories, sourcedict, lbs)
+    if re.match('[^/]*default numbe[^\d]*(\d+)',set_text):
+        buffer.set(int(re.search('[^/]*default numbe[^\d]*(\d+)',set_text).group(1)))
+    if re.match('[^/]*default search word[^/]*=[^/]*"([^/]+)"',set_text):
+        search_buffer .set(re.search('[^/]*default search word[^/]*=[^/]*"([^/]+)"',set_text).group(1))
 
-# load text files from "dh" folder if it exits
-if os.path.isdir(directory+ "dh"):
-    file_directories = []
-    for filename in os.listdir(directory + "dh"):
-        if filename.split(".")[-1] == "txt":
-            file_directories.append(directory + "dh/" + filename)        
-    if len(file_directories) > 0:
-        open_files(file_directories, dhdict, lbdh)
-
-#if len(sourcedict) >0:
-#   update_lb(sourcedict[lbs.get(0)])
 # set the welcome screen
 update_lb(" ____   ___    _"+"\n"+
           "| __ ) / _ \  / \ "  +"\n"+
