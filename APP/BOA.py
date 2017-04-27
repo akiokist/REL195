@@ -148,13 +148,13 @@ def plot_hapax():
         for word in fd:
             if english_words.check(word.lower()) and not re.match("\d",word):
                 english_count = english_count +1
-                if english_count % 8 ==0:
+                if english_count % 6 ==0:
                     english_hapax += word + "\n"
                 else:
                     english_hapax += word + ", "
             elif fd[word] == 1 and not re.match("\d",word) and not word[0] == "-"and not word[-1] == "-":
                 count = count+1
-                if count % 8 ==0:
+                if count % 6 ==0:
                     hapax += word + "\n"
                 else:
                     hapax += word + ", "
