@@ -113,23 +113,12 @@ def remove_dh(event):
         lb.delete(1.0,END)
 
 def remove_file(event = ""):
-    iDir='c:/'
-    fTyp=[('text file','*.txt')]
-    file_directory=askopenfilename(filetypes=fTyp,initialdir=iDir)
-    if file_directory is not "":
-        filename = re.compile('\/[^/]+\.txt').findall(file_directory)[0]
-        filename = filename[1:len(filename)-4]
-        lb.delete(1.0,END)
-        if filename in sourcedict:
-            sourcedict.pop(filename)
-            lbs.delete(0,END)
-            for key in sourcedict:
-                lbs.insert('end',key)
-        if filename in dhdict:
-            dhdict.pop(filename)
-            lbdh.delete(0,END)
-            for key in dhdict:
-                lbdh.insert('end',key)
+    for i, entry in enumerate(lbs.get(0, END)):
+        sourcedict.pop(entry)
+    for i, entry in enumerate(lbdh.get(0, END)):
+        dhdict.pop(entry)
+    lbs.delete(0,END)
+    lbdh.delete(0,END)
 
 def update_display_s(event):
     if not lbs.get('active') is '':
@@ -557,7 +546,7 @@ menu_file = Menu(m)
 m.add_cascade(label='FILE',menu=menu_file,underline=0)
 menu_file.add_command(label='Load Text',under=0,command=load_source)
 menu_file.add_command(label="Load "+DH_FILE_CALLED+" File",under=0,command=load_dh)
-menu_file.add_command(label='Remove Sources',under=0,command=remove_file)
+menu_file.add_command(label='Remove Files',under=0,command=remove_file)
 
 menu_dh = Menu(m)
 m.add_cascade(label=DH_FILE_CALLED,menu=menu_dh,underline=0)
@@ -844,7 +833,7 @@ lb.insert('end',"  |____/ \___/_/   \_\ ",'search')
 lb.insert(
           'end',
           "\n\nWelcome to BOA, the Biblical Origins Analyzer! This program gathers together several text analysis tools from the Python-based NLTK (Natural Language Toolkit) suite into one easy-to-use space for Torah scholars doing compositional analysis.\n\n"+
-          "BOA was constructed around the documentary hypothesis (DH) of Pentateuchal biblical scholarship, that \n"+
+          "BOA was constructed around the documentary hypothesis (DH) of Pentateuchal biblical scholarship, that "+
           "the Pentateuch as we have it today originated as four separate textual sources, the Yahwist (J), Elohist (E), Deuteronomic (D) and Priestly (P) sources, which were combined\n\n"+
           "That the Pentateuch was originally four separate sources that were combined over time \n"+
           "For example, Genesis 1:1-2:3, which constitutes the seven day Creation account, is considered syntactically different enough from the rest of Genesis 2 that documentary hypothesis scholars have judged the two sections to have been composed at different times by different writers."
