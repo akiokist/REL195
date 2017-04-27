@@ -1,6 +1,6 @@
-Sources with "n:n" = False
+Sources with "n:n" = True
 Marking with "G F Marking"  = True
-Load Sources automatically = False
-Load Marking automatically = False
-default number =   20
+Load Sources automatically = True
+Load Marking automatically = True
+default number =   15
 default search word = ""
