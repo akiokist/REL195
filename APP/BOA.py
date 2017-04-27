@@ -832,7 +832,7 @@ lb.insert('end',"\n")
 lb.insert('end',"  |____/ \___/_/   \_\ ",'search')
 lb.insert(
           'end',
-          "\n\nWelcome to BOA, the Biblical Origins Analyzer! This program gathers together several text analysis tools from the Python-based NLTK (Natural Language Toolkit) suite into one easy-to-use space for Torah scholars doing compositional analysis.\n\n"+
+          "\n\nWelcome to BOA, the Biblical Origins Analyzer!\nThis program gathers together several text analysis tools from the Python-based NLTK (Natural Language Toolkit) suite into one easy-to-use space for Torah scholars doing compositional analysis.\n\n"+
           "BOA was constructed around the documentary hypothesis (DH) of Pentateuchal biblical scholarship, that "+
           "the Pentateuch as we have it today originated as four separate textual sources, the Yahwist (J), Elohist (E), Deuteronomic (D) and Priestly (P) sources, which were combined\n\n"+
           "That the Pentateuch was originally four separate sources that were combined over time \n"+
@@ -878,7 +878,7 @@ Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = int(re
 # control the bihavior of resising window, see what happens when you change the size
 for i in range(0, lb_size):
     root.grid_rowconfigure(i,weight=1)
-for i in range(0, left+right):
+for i in range(0, left+right+1):
     root.grid_columnconfigure(i,weight=1)
 
 # this starts the app
