@@ -865,13 +865,13 @@ n_spin.grid(row = lb_size+1, column = search_width+spin_width+1,columnspan = spi
 
 #right side top to down
 lbs_label.grid(row = 0, column = left+1, pady = pad,padx=pad,sticky = 'ew',rowspan=reg_size,columnspan=right)
-lbs.grid(row =  reg_size+1,column = left+1, pady = 0,padx=0,sticky = 'ns',rowspan=side_ld_size-reg_size,columnspan=right)#ipady = 40
-ssb1.grid(row =  reg_size+1,column = right +left, sticky = 'ns',columnspan=right,rowspan=side_ld_size-reg_size)
+lbs.grid(row =  reg_size+1,column = left+1, pady = 0,padx=2,sticky = 'nsew',rowspan=side_ld_size-reg_size,columnspan=right-1)#ipady = 40
+ssb1.grid(row =  reg_size+1,column = right +left, sticky = 'ns',columnspan=1,rowspan=side_ld_size-reg_size)
 ssb2.grid(row =  side_ld_size+1, column = left+1, sticky = 'ew',rowspan=reg_size,padx=pad,columnspan=right)
 Checkbutton(text = 'Source with "n:n"', variable = nn).grid(row = side_ld_size+reg_size+1, column = left+1, pady = 0,padx=8,sticky = 'w',rowspan=reg_size,columnspan=right)
 lbdh_label.grid(row = int(reg_size *2+side_ld_size+1), column = left+1, pady = 0,padx=8,sticky = 'ew',rowspan=reg_size,columnspan=right)
-lbdh.grid(row = int(reg_size *3+side_ld_size+1), column = left+1, pady = 0,padx=8, sticky = 'ns',rowspan=side_ld_size-reg_size,columnspan=right)#,ipady = 30
-dhsb1.grid(row = int(reg_size *3+side_ld_size+1), column = right+left, sticky = 'ns',rowspan=side_ld_size)
+lbdh.grid(row = int(reg_size *3+side_ld_size+1), column = left+1, pady = 0,padx=2, sticky = 'nsew',rowspan=side_ld_size-reg_size,columnspan=right-1)#,ipady = 30
+dhsb1.grid(row = int(reg_size *3+side_ld_size+1), column = right+left, sticky = 'ns',rowspan=side_ld_size-reg_size,columnspan=1)
 dhsb2.grid(row = int(reg_size *2+side_ld_size*2+1),column = left+1,sticky = 'ew',rowspan=reg_size,columnspan=right,padx=pad)
 Checkbutton(text = 'DH with "G F Marking"', variable = naming).grid(row = int(reg_size *3+side_ld_size*2+1), column = left+1, pady = 0,padx=8,sticky = 'w',rowspan=reg_size,columnspan=right)
 
